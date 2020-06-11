@@ -1,7 +1,7 @@
 # PlusAuth NodeJS Starter Project
 
 
-This is a very simple Node.js project demonstrating basic authentication flows such as register, login and logout. To keep things simple we used Express.js as the server framework and Passport.js with OIDC Strategy for authentication.
+This is a very simple Node.js project demonstrating basic authentication flows such as register, login and logout. To keep things simple Express.js used as the server framework and Passport.js with OIDC Strategy for authentication.
 
 
 ## Table of Contents
@@ -24,15 +24,25 @@ Finally, write down your Client Id and Client Secret for server configuration.
  
 ## Getting Started
 
-First we need to configure the server. Rename `.env.example` file as just`.env`.
+First install dependencies 
+```shell script
+$ npm install
+# or with yarn
+$ yarn install
+```
+
+After that all you need to do is configuring the application. Rename `.env.example` file as just`.env`.
 
 Then configure the `.env` file using your Client ID, Client Secret and your PlusAuth tenant id.
 
 
 Now you can start the server:
 
-        npm start
-    
+```shell script
+$ npm run start
+// or with yarn
+$ yarn start
+```
 
 The example will be running at [http://localhost:3000/](http://localhost:3000/)
 
