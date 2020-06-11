@@ -3,14 +3,16 @@ const logger = require("morgan");
 const path = require("path");
 const session = require("express-session");
 const passport = require("passport");
-const { Issuer, Strategy } = require("openid-client");
 require("dotenv").config();
+const { Issuer, Strategy } = require("openid-client");
 
 (async () => {
   const app = express();
 
+  // view engine setup
   app.set("views", path.join(__dirname, "views"));
   app.set("view engine", "ejs");
+
   app.use(logger("dev"));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
@@ -29,8 +31,9 @@ require("dotenv").config();
   const plusauthClient = new issuer.Client({
     client_id: process.env.CLIENT_ID,
     client_secret: process.env.CLIENT_SECRET,
-    redirect_uris: ["http://localhost:3000/login/callback"],
-    post_logout_redirect_uris: ["http://localhost:3000/"],
+    redirect_uris: ["http://localhost:3000/auth/callback"],
+
+    post_logout_redirect_uris: ["http://localhost:3000/auth/logout/callback"],
     response_types: ["code"],
   });
 
@@ -40,48 +43,55 @@ require("dotenv").config();
       {
         client: plusauthClient,
         params: {
-          scope: "openid email profile",
+          claims: "openid email profile",
         },
       },
       (token, done) => {
-        plusauthClient
-          .userinfo(token)
-          .then((user) => {
-            return done(null, { ...user, ...token });
-          })
-          .catch((e) => {
-            console.log(e);
-          });
+        // Fetch profile from Plusauth using issued token
+        plusauthClient.userinfo(token).then((user) => {
+          return done(null, { ...user, ...token });
+        });
       }
     )
   );
+  passport.serializeUser((user, next) => {
+    next(null, user);
+  });
 
-  passport.serializeUser((user, next) => next(null, user));
+  passport.deserializeUser((obj, next) => {
+    next(null, obj);
+  });
 
-  passport.deserializeUser((obj, next) => next(null, obj));
+  function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+      return next();
+    }
 
-  const isLoggedIn = (req, res, next) =>
-    req.isAuthenticated() ? next() : res.redirect("/login");
+    res.redirect("/auth/login");
+  }
 
-  app.get("/login", passport.authenticate("oidc"));
-
-  app.get("/profile", isLoggedIn, (req, res) =>
-    res.render("profile", { user: req.user })
-  );
-
-  app.get(
-    "/login/callback",
+  app.use("/auth/login", passport.authenticate("oidc"));
+  app.use("/profile", isLoggedIn, (req, res) => {
+    res.render("profile", { user: req.user });
+  });
+  app.use(
+    "/auth/callback",
     passport.authenticate("oidc", {
       failureRedirect: "/error",
       successRedirect: "/profile",
     })
   );
-  app.get("/", (req, res) => res.render("index", { user: req.user }));
-
-  app.get("/logout", (req, res) => {
-    const id_token = req.user.id_token;
+  app.get("/", function (req, res) {
+    res.render("index", { user: req.user });
+  });
+  app.get("/auth/logout", (req, res) => {
+    res.redirect(
+      plusauthClient.endSessionUrl({ id_token_hint: req.user.id_token })
+    );
+  });
+  app.get("/auth/logout/callback", (req, res) => {
     req.logout();
-    res.redirect(plusauthClient.endSessionUrl({ id_token_hint: id_token }));
+    res.redirect("/");
   });
 
   app.listen(3000, () => {

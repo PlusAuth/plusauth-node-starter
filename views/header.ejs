@@ -30,16 +30,18 @@
             Logged in as: <%= user.email %>
           </a>
         </li>
-        <a class="nav-link" href="/logout">
+        <a class="nav-link" href="/auth/logout">
           Logout
         </a>
         <% } else { %>
         <li class="nav-item navbar-nav">
-          <a class="nav-link" href="/login">
+          <a class="nav-link" href="/auth/login">
             Login
           </a>
         </li>
         <% } %>
       </div>
     </nav>
-    <main role="main" class="container">
+    <main role="main" class="container"></main>
+  </body>
+</html>

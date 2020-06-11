@@ -1,4 +1,4 @@
-# Plusauth Node.js Starter Project
+# Plusatuh Starter Project
 
 
 
@@ -17,8 +17,8 @@ Before running the project, you must first follow these steps:
 1) Create a Plusauth account and a tenant at https://dashboard.plusauth.com
 2) Navigate to `Clients` tab and create a client of type `Regular Web Application`.
 3) Go to details page of the client that you've just created and set the following fields as:
-* Redirect Uris: http://localhost:3000/login/callback
-* Post Logout Redirect Uris: http://localhost:3000/
+* Redirect Uris: http://localhost/auth/callback
+* Post Logout Redirect Uris: http://localhost:3000/auth/logout/callback
 
 
  Finally write down your Client Id and Client Secret for server configuration 
@@ -26,11 +26,11 @@ Before running the project, you must first follow these steps:
 
 First we need to configure the server. Rename `.env.example` file as just`.env`.
 
-Then configure the `.env` file using your Client Id, Client Secret and your Plusauth tenant name.
+Then configure the `.env` file using your Client ID, Client Secret and your Plusauth tenant id.
 
 
-Finally install deps & start the server:
-        npm install
+Finally start the server:
+
         npm start
     
 
