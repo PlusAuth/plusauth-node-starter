@@ -1,0 +1,24 @@
+<%- include('header'); %>
+<div class="jumbotron">
+  <div class="container">
+    <h1 class="display-3">Hello, world!</h1>
+    <p>
+      This is a template for a simple login/register system. It includes a
+      simple OpenID Connect Authorization Code Flow. To view Profile page please login.
+    </p>
+    <p>
+      
+      <% if(user) { %>
+      <a class="btn btn-success btn-lg" href="/profile" role="button"
+        >View Profile &raquo;</a
+      >
+      <% }else { %>
+      <a class="btn btn-primary btn-lg" href="/login" role="button"
+        >Login/Register &raquo;</a
+      >
+      <% } %>
+    </p>
+    <p></p>
+  </div>
+</div>
+<%- include('footer'); %>

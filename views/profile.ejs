@@ -1,0 +1,6 @@
+<%- include('header'); %>
+<div class="container">
+  <h3>Welcome <%= user.email %>!</h3>
+  <pre>User object: <%= JSON.stringify(user, null, 3) %></pre>
+</div>
+<%- include('footer'); %>
