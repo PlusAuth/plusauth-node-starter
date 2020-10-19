@@ -79,9 +79,11 @@ const { Issuer, Strategy } = require("openid-client");
   }
 
   app.use("/auth/login", passport.authenticate("oidc"));
+
   app.use("/profile", isLoggedIn, (req, res) => {
     res.render("profile", { user: req.user });
   });
+
   app.use(
     "/auth/callback",
     passport.authenticate("oidc", {
@@ -90,14 +92,17 @@ const { Issuer, Strategy } = require("openid-client");
       successRedirect: "/profile",
     })
   );
+
   app.get("/", function (req, res) {
     res.render("index", { user: req.user });
   });
+
   app.get("/auth/logout", (req, res) => {
     res.redirect(
       plusAuthClient.endSessionUrl({ id_token_hint: req.session.token.id_token })
     );
   });
+
   app.get("/auth/logout/callback", (req, res) => {
     req.logout();
     res.redirect("/");
