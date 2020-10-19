@@ -93,7 +93,7 @@ const { Issuer, Strategy } = require("openid-client");
   });
   app.get("/auth/logout", (req, res) => {
     res.redirect(
-      plusauthClient.endSessionUrl({ id_token_hint: req.user.id_token })
+      plusauthClient.endSessionUrl({ id_token_hint: req.session.token.id_token })
     );
   });
   app.get("/auth/logout/callback", (req, res) => {
