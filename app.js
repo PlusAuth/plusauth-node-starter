@@ -3,7 +3,9 @@ const logger = require("morgan");
 const path = require("path");
 const session = require("express-session");
 const passport = require("passport");
+
 require("dotenv").config();
+
 const { Issuer, Strategy } = require("openid-client");
 
 (async () => {
@@ -29,9 +31,9 @@ const { Issuer, Strategy } = require("openid-client");
   app.use(express.urlencoded({ extended: false }));
   app.use(session(sessionOptions));
 
-  const issuer = await Issuer.discover(process.env.PLUSAUTH_ISSUER_URL);
+  const plusAuthIssuer = await Issuer.discover(process.env.PLUSAUTH_ISSUER_URL);
 
-  const plusauthClient = new issuer.Client({
+  const plusAuthClient = new plusAuthIssuer.Client({
     PLUSAUTH_CLIENT_ID: process.env.PLUSAUTH_CLIENT_ID,
     PLUSAUTH_CLIENT_SECRET: process.env.PLUSAUTH_CLIENT_SECRET,
     redirect_uris: ["http://localhost:3000/auth/callback"],
@@ -44,7 +46,7 @@ const { Issuer, Strategy } = require("openid-client");
     "oidc",
     new Strategy(
       {
-        client: plusauthClient,
+        client: plusAuthClient,
         params: {
           claims: "openid email profile",
         },
@@ -93,7 +95,7 @@ const { Issuer, Strategy } = require("openid-client");
   });
   app.get("/auth/logout", (req, res) => {
     res.redirect(
-      plusauthClient.endSessionUrl({ id_token_hint: req.session.token.id_token })
+      plusAuthClient.endSessionUrl({ id_token_hint: req.session.token.id_token })
     );
   });
   app.get("/auth/logout/callback", (req, res) => {
@@ -101,10 +103,10 @@ const { Issuer, Strategy } = require("openid-client");
     res.redirect("/");
   });
 
-  app.get("/error", ((req, res) => {
+  app.get("/error", (req, res) => {
     const messages = req.session.messages
     res.json( messages[messages.length - 1] )
-  }))
+  })
 
   app.listen(process.env.PORT, () => {
     console.log("Server running on port 3000");
