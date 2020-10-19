@@ -9,6 +9,17 @@ const { Issuer, Strategy } = require("openid-client");
 (async () => {
   const app = express();
 
+  const sessionOptions = {
+    secret: "SomeRandomValue", // Change this to a random value
+    resave: false,
+    saveUninitialized: true,
+  }
+
+  if(process.env.NODE_ENV === "production"){
+    // Use secure cookies in production. More info at https://www.npmjs.com/package/express-session#cookiesecure
+    sessionOptions.cookie.secure = true;
+  }
+
   // view engine setup
   app.set("views", path.join(__dirname, "views"));
   app.set("view engine", "ejs");
@@ -16,15 +27,7 @@ const { Issuer, Strategy } = require("openid-client");
   app.use(logger("dev"));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
-  app.use(
-    session({
-      secret: "ItIsYourBirthday.",
-      resave: false,
-      saveUninitialized: true,
-    })
-  );
-  app.use(passport.initialize());
-  app.use(passport.session());
+  app.use(session(sessionOptions));
 
   const issuer = await Issuer.discover(process.env.AUTH_URL);
 
@@ -61,6 +64,9 @@ const { Issuer, Strategy } = require("openid-client");
   passport.deserializeUser((obj, next) => {
     next(null, obj);
   });
+
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
