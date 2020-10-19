@@ -48,12 +48,12 @@ const { Issuer, Strategy } = require("openid-client");
         params: {
           claims: "openid email profile",
         },
+        passReqToCallback:  true
       },
-      (token, done) => {
-        // Fetch profile from Plusauth using issued token
-        plusauthClient.userinfo(token).then((user) => {
-          return done(null, { ...user, ...token });
-        });
+      (req, token, user,done) => {
+        // Store token in session
+        req.session.token = token
+        return done(null, user);
       }
     )
   );
