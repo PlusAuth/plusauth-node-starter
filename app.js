@@ -29,11 +29,11 @@ const { Issuer, Strategy } = require("openid-client");
   app.use(express.urlencoded({ extended: false }));
   app.use(session(sessionOptions));
 
-  const issuer = await Issuer.discover(process.env.AUTH_URL);
+  const issuer = await Issuer.discover(process.env.PLUSAUTH_ISSUER_URL);
 
   const plusauthClient = new issuer.Client({
-    client_id: process.env.CLIENT_ID,
-    client_secret: process.env.CLIENT_SECRET,
+    PLUSAUTH_CLIENT_ID: process.env.PLUSAUTH_CLIENT_ID,
+    PLUSAUTH_CLIENT_SECRET: process.env.PLUSAUTH_CLIENT_SECRET,
     redirect_uris: ["http://localhost:3000/auth/callback"],
 
     post_logout_redirect_uris: ["http://localhost:3000/auth/logout/callback"],
@@ -100,7 +100,7 @@ const { Issuer, Strategy } = require("openid-client");
     res.redirect("/");
   });
 
-  app.listen(3000, () => {
+  app.listen(process.env.PORT, () => {
     console.log("Server running on port 3000");
   });
 })();
