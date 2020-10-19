@@ -108,7 +108,7 @@ const { Issuer, Strategy } = require("openid-client");
     res.json( messages[messages.length - 1] )
   })
 
-  app.listen(process.env.PORT, () => {
-    console.log("Server running on port 3000");
+  const listener = app.listen(process.env.PORT, () => {
+    console.log("Application started at http://localhost:"+ listener.address().port);
   });
 })();
