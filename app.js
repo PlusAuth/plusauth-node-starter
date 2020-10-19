@@ -83,6 +83,7 @@ const { Issuer, Strategy } = require("openid-client");
   app.use(
     "/auth/callback",
     passport.authenticate("oidc", {
+      failureMessage: true,
       failureRedirect: "/error",
       successRedirect: "/profile",
     })
@@ -99,6 +100,11 @@ const { Issuer, Strategy } = require("openid-client");
     req.logout();
     res.redirect("/");
   });
+
+  app.get("/error", ((req, res) => {
+    const messages = req.session.messages
+    res.json( messages[messages.length - 1] )
+  }))
 
   app.listen(process.env.PORT, () => {
     console.log("Server running on port 3000");
