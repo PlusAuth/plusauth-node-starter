@@ -43,7 +43,7 @@ const { Issuer, Strategy } = require("openid-client");
   });
 
   passport.use(
-    "oidc",
+    "PlusAuth",
     new Strategy(
       {
         client: plusAuthClient,
@@ -78,7 +78,7 @@ const { Issuer, Strategy } = require("openid-client");
     res.redirect("/auth/login");
   }
 
-  app.use("/auth/login", passport.authenticate("oidc"));
+  app.use("/auth/login", passport.authenticate("PlusAuth"));
 
   app.use("/profile", isLoggedIn, (req, res) => {
     res.render("profile", { user: req.user });
@@ -86,7 +86,7 @@ const { Issuer, Strategy } = require("openid-client");
 
   app.use(
     "/auth/callback",
-    passport.authenticate("oidc", {
+    passport.authenticate("PlusAuth", {
       failureMessage: true,
       failureRedirect: "/error",
       successRedirect: "/profile",
