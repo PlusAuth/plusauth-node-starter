@@ -17,7 +17,7 @@ const { Issuer, Strategy } = require("openid-client");
     saveUninitialized: true,
   }
 
-  if(process.env.NODE_ENV === "production"){
+  if (process.env.NODE_ENV === "production") {
     // Use secure cookies in production. More info at https://www.npmjs.com/package/express-session#cookiesecure
     sessionOptions.cookie.secure = true;
   }
@@ -31,34 +31,34 @@ const { Issuer, Strategy } = require("openid-client");
   app.use(express.urlencoded({ extended: false }));
   app.use(session(sessionOptions));
 
-  const plusAuthIssuer = await Issuer.discover(process.env.PLUSAUTH_ISSUER_URL);
+  const PlusAuthIssuer = await Issuer.discover(process.env.PLUSAUTH_ISSUER_URL);
 
-  const plusAuthClient = new plusAuthIssuer.Client({
-    PLUSAUTH_CLIENT_ID: process.env.PLUSAUTH_CLIENT_ID,
-    PLUSAUTH_CLIENT_SECRET: process.env.PLUSAUTH_CLIENT_SECRET,
+  const PlusAuthClient = new PlusAuthIssuer.Client({
+    client_id: process.env.PLUSAUTH_CLIENT_ID,
+    client_secret: process.env.PLUSAUTH_CLIENT_SECRET,
     redirect_uris: ["http://localhost:3000/auth/callback"],
 
     post_logout_redirect_uris: ["http://localhost:3000/auth/logout/callback"],
     response_types: ["code"],
   });
 
-  passport.use(
-    "PlusAuth",
-    new Strategy(
-      {
-        client: plusAuthClient,
-        params: {
-          claims: "openid email profile",
-        },
-        passReqToCallback:  true
+  const PlusAuthStrategy = new Strategy(
+    {
+      client: PlusAuthClient,
+      params: {
+        scope: "openid email profile",
       },
-      (req, token, user,done) => {
-        // Store token in session
-        req.session.token = token
-        return done(null, user);
-      }
-    )
-  );
+      passReqToCallback: true
+    },
+    (req, token, user, done) => {
+      // Store token in session
+      req.session.token = token
+      return done(null, user);
+    }
+  )
+
+  passport.use("PlusAuth", PlusAuthStrategy);
+
   passport.serializeUser((user, next) => {
     next(null, user);
   });
@@ -110,10 +110,10 @@ const { Issuer, Strategy } = require("openid-client");
 
   app.get("/error", (req, res) => {
     const messages = req.session.messages
-    res.json( messages[messages.length - 1] )
+    res.json(messages[messages.length - 1])
   })
 
   const listener = app.listen(process.env.PORT, () => {
-    console.log("Application started at http://localhost:"+ listener.address().port);
+    console.log("Application started at http://localhost:" + listener.address().port);
   });
 })();
