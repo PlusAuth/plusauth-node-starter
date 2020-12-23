@@ -3,6 +3,7 @@
 
 This is a very simple Node.js project demonstrating basic authentication flows such as register, login and logout. To keep things simple Express.js used as the server framework and Passport.js with OIDC Strategy for authentication.
 
+You can find step by step explanation at [PlusAuth Docs](https://docs.plusauth.com/quickStart/web/nodejs/express)
 
 ## Table of Contents
 
