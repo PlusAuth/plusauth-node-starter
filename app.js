@@ -113,7 +113,7 @@ const { Issuer, Strategy } = require("openid-client");
     res.json(messages[messages.length - 1])
   })
 
-  const listener = app.listen(process.env.PORT, () => {
+  const listener = app.listen(process.env.PORT || 3000, () => {
     console.log("Application started at http://localhost:" + listener.address().port);
   });
 })();
