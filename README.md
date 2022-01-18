@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://plusauth.com/">
-    <img src="https://docs.plusauth.com/images/pa-white.svg" alt="Logo" width="320" height="72" >
+    <img src="https://docs.plusauth.com/favicon.png" alt="Logo" width="144">
   </a>
 </div>
 
