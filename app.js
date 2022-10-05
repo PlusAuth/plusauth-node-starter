@@ -37,7 +37,7 @@ const { Issuer, Strategy } = require("openid-client");
     client_id: process.env.PLUSAUTH_CLIENT_ID,
     client_secret: process.env.PLUSAUTH_CLIENT_SECRET,
     redirect_uris: ["http://localhost:3000/auth/callback"],
-
+    token_endpoint_auth_method: "client_secret_post",
     post_logout_redirect_uris: ["http://localhost:3000/auth/logout/callback"],
     response_types: ["code"],
   });
@@ -99,13 +99,15 @@ const { Issuer, Strategy } = require("openid-client");
 
   app.get("/auth/logout", (req, res) => {
     res.redirect(
-      PlusAuthClient.endSessionUrl({ id_token_hint: req.session.token.id_token })
+      PlusAuthClient.endSessionUrl({ client_id: process.env.PLUSAUTH_CLIENT_ID })
     );
   });
 
-  app.get("/auth/logout/callback", (req, res) => {
-    req.logout();
-    res.redirect("/");
+  app.get("/auth/logout/callback", (req, res, next) => {
+    req.logout(function (err) {
+      if (err) { return next(err); }
+      res.redirect('/');
+    });
   });
 
   app.get("/error", (req, res) => {
